@@ -143,6 +143,7 @@ curl.exe -k -i -X POST https://localhost:8443/v1/tasks `
 ```
 
 _Скриншот — успешный ответ по HTTPS:_
+<img width="974" height="582" alt="image" src="https://github.com/user-attachments/assets/20ff35c8-0a51-4113-8d0f-142bc95a205f" />
 
 ### Получить список задач по HTTPS
 
@@ -153,6 +154,7 @@ curl.exe -k -i https://localhost:8443/v1/tasks `
 ```
 
 _Скриншот — список задач по HTTPS:_
+<img width="974" height="852" alt="image" src="https://github.com/user-attachments/assets/18fb4b1d-a700-4213-8d4c-15590a555ddf" />
 
 ### Поиск задачи
 
@@ -162,3 +164,5 @@ curl.exe -k -s "https://localhost:8443/v1/tasks/search?title=SQL" `
 ```
 
 _Скриншот — результат поиска:_
+<img width="974" height="570" alt="image" src="https://github.com/user-attachments/assets/5a1f7de3-0fce-4ed5-adab-e3a9949595c1" />
+<img width="974" height="781" alt="image" src="https://github.com/user-attachments/assets/0cf5f216-12db-4592-9e15-26d113089d7a" />
