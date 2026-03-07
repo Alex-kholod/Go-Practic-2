@@ -56,7 +56,10 @@ docker compose up -d
 
 После запуска доступны:
 - **Prometheus** — http://localhost:9090
+<img width="974" height="388" alt="image" src="https://github.com/user-attachments/assets/d26a0022-41d3-4ef2-85c3-c5523486163e" />
+
 - **Grafana** — http://localhost:3000 (логин: `admin` / пароль: `admin`)
+<img width="974" height="492" alt="image" src="https://github.com/user-attachments/assets/feb386d8-8476-4b3a-81ea-1776999352ba" />
 
 ## Проверка метрик
 ### Проверить endpoint /metrics напрямую
@@ -66,12 +69,15 @@ curl -s http://localhost:8082/metrics | grep http_
 ```
 
 _Скриншот вывода `/metrics`:_
+<img width="974" height="600" alt="image" src="https://github.com/user-attachments/assets/478490e5-4463-4629-9d3b-3f8fc59d2e34" />
+
 
 ### targets в Prometheus
 
 Открыть http://localhost:9090/targets оба target имеют статус **UP**.
 
 _Скриншот страницы Targets в Prometheus:_
+<img width="974" height="496" alt="image" src="https://github.com/user-attachments/assets/ee1179a6-eecb-4cda-99e4-c3a62bd7c0cf" />
 
 ### Генерация нагрузки для демонстрации метрик
 
@@ -100,6 +106,8 @@ for ($i = 1; $i -le 20; $i++) {
     -H "Authorization: Bearer wrong-token" | Out-Null
 }
 ```
+<img width="974" height="564" alt="image" src="https://github.com/user-attachments/assets/b1ae734f-5a1a-4555-920c-cc0f723a123c" />
+
 ## Графики в Grafana
 ### График 1 — RPS (запросы в секунду)
 
@@ -108,6 +116,8 @@ sum(rate(http_requests_total{service="tasks"}[1m])) by (route)
 ```
 
 _Скриншот графика RPS:_
+<img width="974" height="463" alt="image" src="https://github.com/user-attachments/assets/bd83444e-2a08-4297-9f54-5bad3daa2a5e" />
+
 
 ### График 2 — Ошибки (4xx и 5xx)
 
@@ -116,6 +126,7 @@ sum(rate(http_requests_total{service="tasks", status=~"4..|5.."}[1m])) by (statu
 ```
 
 _Скриншот графика ошибок:_
+<img width="974" height="497" alt="image" src="https://github.com/user-attachments/assets/19b880da-60db-4d76-9843-18b84d4badaa" />
 
 ### График 3 — Latency p95
 
@@ -126,4 +137,5 @@ histogram_quantile(0.95,
 ```
 
 _Скриншот графика latency p95:_
+<img width="974" height="491" alt="image" src="https://github.com/user-attachments/assets/3f21b38a-f17d-4f2c-8e97-d081abd243da" />
 
