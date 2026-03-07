@@ -68,6 +68,7 @@ curl -s -X POST http://localhost:8081/v1/auth/login \
 ```
 
 _Скриншот:_
+<img width="974" height="541" alt="image" src="https://github.com/user-attachments/assets/883e060f-85c1-4900-b72c-55d02174b1ce" />
 
 ### Создать задачу с X-Request-ID
 
@@ -80,10 +81,13 @@ curl -i -X POST http://localhost:8082/v1/tasks \
 ```
 
 _Скриншот ответа:_
+<img width="974" height="607" alt="image" src="https://github.com/user-attachments/assets/f6e63dd0-cc53-434b-aeb0-34724fb367ca" />
 
 _Скриншот логов tasks-сервиса:_
+<img width="974" height="235" alt="image" src="https://github.com/user-attachments/assets/067543c8-8997-464d-93fd-50b16d5c7353" />
 
 _Скриншот логов auth-сервиса:_
+<img width="974" height="234" alt="image" src="https://github.com/user-attachments/assets/0f358819-af7c-403f-a625-9afb177908ed" />
 
 ### Запрос с неверным токеном
 
@@ -94,6 +98,7 @@ curl -i http://localhost:8082/v1/tasks \
 ```
 
 _Скриншот ответа и логов с уровнем warn:_
+<img width="974" height="37" alt="image" src="https://github.com/user-attachments/assets/b0457977-d37d-445c-81cb-22e86561d9f2" />
 
 ## Примеры лог-событий
 
