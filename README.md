@@ -94,6 +94,7 @@ curl.exe -k -i -X POST https://localhost:8443/v1/auth/login `
 В ответе будут установлены две cookie и возвращён `csrf_token` в теле JSON.
 
 _Скриншот — ответ с заголовками Set-Cookie:_
+<img width="974" height="543" alt="image" src="https://github.com/user-attachments/assets/f55679ce-9d6b-47b0-9f3b-cb90a120e391" />
 
 ### POST без CSRF токена → ожидается 403
 
@@ -105,6 +106,7 @@ curl.exe -k -i -X POST https://localhost:8443/v1/tasks `
 ```
 
 _Скриншот — ответ 403 Forbidden:_
+<img width="974" height="541" alt="image" src="https://github.com/user-attachments/assets/87ac3538-e9c5-4b07-b361-e2beab932a5f" />
 
 ### POST с CSRF токеном
 
@@ -128,6 +130,7 @@ curl.exe -k -i -X POST https://localhost:8443/v1/tasks `
 ```
 
 _Скриншот — ответ 201 Created:_
+<img width="974" height="626" alt="image" src="https://github.com/user-attachments/assets/d6d33b69-2294-484e-bac9-091b107d0e71" />
 
 ### Демонстрация XSS санитизации
 
@@ -139,6 +142,7 @@ curl.exe -k -i -X POST https://localhost:8443/v1/tasks `
   -d '{"title":"XSS test","description":"<script>alert(1)</script>"}'
 ```
 
-В сохранённой задаче `description` будет содержать `&lt;script&gt;alert(1)&lt;/script&gt;` — тег не выполнится при отображении в браузере.
+В сохранённой задаче `description` содержит `&lt;script&gt;alert(1)&lt;/script&gt;` — тег не выполнится при отображении в браузере.
 
 _Скриншот — сохранённое значение с экранированными тегами:_
+<img width="974" height="627" alt="image" src="https://github.com/user-attachments/assets/739f26ea-30c8-4b0d-9072-3deb4c5bb459" />
