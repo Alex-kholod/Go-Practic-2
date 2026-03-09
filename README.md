@@ -76,6 +76,8 @@ docker logs -f auth
 ```
 
 _Скриншот — `docker compose ps`, все контейнеры Up:_
+<img width="974" height="278" alt="image" src="https://github.com/user-attachments/assets/edf44579-c70d-4101-9bbb-aaa80d779e29" />
+<img width="974" height="114" alt="image" src="https://github.com/user-attachments/assets/660b652b-75fc-4bea-870e-f546db012daa" />
 
 ### Сборка образов вручную (из корня репозитория)
 
@@ -102,6 +104,7 @@ Write-Host "CSRF: $CSRF"
 ```
 
 _Скриншот — успешный ответ логина:_
+<img width="974" height="549" alt="image" src="https://github.com/user-attachments/assets/07ca3ed7-a9ef-428a-91c4-9475187fa2d7" />
 
 ### Создать задачу
 
@@ -115,6 +118,7 @@ curl.exe -k -i -X POST https://localhost:8443/v1/tasks `
 ```
 
 _Скриншот — ответ 201 Created:_
+<img width="974" height="621" alt="image" src="https://github.com/user-attachments/assets/396c2bd7-350a-4345-9251-fae3ef038201" />
 
 ### Получить список задач
 
@@ -125,3 +129,4 @@ curl.exe -k -i https://localhost:8443/v1/tasks `
 ```
 
 _Скриншот — список задач с поиском по названию:_
+<img width="974" height="693" alt="image" src="https://github.com/user-attachments/assets/700fcaa8-475f-4348-9117-950bc8f857c0" />
