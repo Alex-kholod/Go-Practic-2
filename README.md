@@ -80,7 +80,17 @@ GitHub → Settings → Environments → New environment → "production"
 ## Результаты pipeline
 
 _Скриншот — успешный прогон всех jobs (test + docker):_
-
+ 
+![Pipeline success](docs/images/pipline-success.png)
+ 
 _Скриншот — опубликованные образы в GitHub Container Registry:_
+ 
+![GHCR images](docs/images/packages.png)
+ 
+_Скриншот — логи job test:_
+ 
+![Test logs](docs/images/tasks.png)
 
-_Скриншот — логи job test (go test прошёл):_
+_Скриншот — логи job build:_
+
+![Build logs](docs/images/dockers.png)
