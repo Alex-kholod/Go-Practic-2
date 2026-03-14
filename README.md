@@ -55,7 +55,7 @@ Redis — **ускоритель**, источник истины — PostgreSQL
 ## Запуск сервисов + Redis Cluster
 
 ```powershell
-cd deploy/redis
+cd deploy
 docker compose up -d
 ```
 
