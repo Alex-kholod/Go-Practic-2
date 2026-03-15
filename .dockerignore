@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+
+# Собранные бинарники
+bin/
+dist/
+
+# Временные файлы
+tmp/
+*.log
+*.out
+
+deploy/tls/key.pem
+deploy/tls/cert.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
