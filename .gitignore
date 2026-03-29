@@ -1,0 +1,4 @@
+deploy/tls/cert.pem
+deploy/tls/key.pem
+
+deploy/.env
