@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks
+  namespace: default
+  labels:
+    app: tasks
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tasks
+  # Стратегия обновления: сначала поднимаем новые поды, потом убиваем старые.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # можно иметь на 1 под больше во время обновления
+      maxUnavailable: 0  # ни один под не должен быть недоступен
+  template:
+    metadata:
+      labels:
+        app: tasks
+    spec:
+      containers:
+        - name: tasks
+          # Тег должен быть фиксированным — не latest.
+          # При использовании minikube: minikube image load techip-tasks:0.1
+          # При использовании kind:     kind load docker-image techip-tasks:0.1
+          image: techip-tasks:0.1
+          # imagePullPolicy: Never — для локального образа в minikube/kind.
+          # Поменяй на IfNotPresent или Always при использовании registry.
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8082
+              name: http
+
+          # ── Переменные окружения из ConfigMap ──────────────────────────────
+          envFrom:
+            - configMapRef:
+                name: tasks-config
+
+          # ── Readiness probe ────────────────────────────────────────────────
+          # Kubernetes направляет трафик на под только когда probe успешна.
+          # При падении пода убирает его из балансировки.
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 5   # ждём 5 сек после старта контейнера
+            periodSeconds: 10        # проверяем каждые 10 сек
+            failureThreshold: 3      # 3 неудачи подряд = под не готов
+
+          # ── Liveness probe ─────────────────────────────────────────────────
+          # Kubernetes перезапускает под если liveness не отвечает.
+          # Более длинные таймауты чем у readiness — не перезапускаем слишком агрессивно.
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 15  # даём время на полный старт (БД, Redis)
+            periodSeconds: 20
+            failureThreshold: 3
+
+          # ── Ресурсы ────────────────────────────────────────────────────────
+          resources:
+            requests:
+              cpu: "100m"     # 0.1 CPU — минимум для шедулинга
+              memory: "128Mi"
+            limits:
+              cpu: "500m"     # 0.5 CPU — максимум
+              memory: "256Mi"

@@ -1,0 +1,249 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  auth:
+    build:
+      context: ..
+      dockerfile: services/auth/Dockerfile
+    container_name: auth
+    environment:
+      AUTH_PORT: ${AUTH_PORT}
+      AUTH_GRPC_PORT: ${AUTH_GRPC_PORT}
+    ports:
+      - "${AUTH_PORT}:${AUTH_PORT}"
+      - "${AUTH_GRPC_PORT}:${AUTH_GRPC_PORT}"
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI http://localhost:15672
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis-1:
+    image: redis:7-alpine
+    container_name: redis-1
+    command: redis-server --port 7001 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis1_data:/data
+
+  redis-2:
+    image: redis:7-alpine
+    container_name: redis-2
+    command: redis-server --port 7002 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis2_data:/data
+
+  redis-3:
+    image: redis:7-alpine
+    container_name: redis-3
+    command: redis-server --port 7003 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis3_data:/data
+
+  redis-4:
+    image: redis:7-alpine
+    container_name: redis-4
+    command: redis-server --port 7004 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis4_data:/data
+
+  redis-5:
+    image: redis:7-alpine
+    container_name: redis-5
+    command: redis-server --port 7005 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis5_data:/data
+
+  redis-6:
+    image: redis:7-alpine
+    container_name: redis-6
+    command: redis-server --port 7006 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    volumes:
+      - redis6_data:/data
+
+  redis-init:
+    image: redis:7-alpine
+    container_name: redis-init
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-4
+      - redis-5
+      - redis-6
+    command: >
+      sh -c "sleep 5 &&
+      redis-cli --cluster create
+      redis-1:7001 redis-2:7002 redis-3:7003
+      redis-4:7004 redis-5:7005 redis-6:7006
+      --cluster-replicas 1 --cluster-yes"
+    restart: "no"
+
+  tasks-1:
+    build:
+      context: ..
+      dockerfile: services/tasks/Dockerfile
+    container_name: tasks-1
+    environment:
+      TASKS_PORT: "8082"
+      AUTH_GRPC_ADDR: ${AUTH_GRPC_ADDR}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_ADDRS: "redis-1:7001,redis-2:7002,redis-3:7003,redis-4:7004,redis-5:7005,redis-6:7006"
+      CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS}
+      CACHE_TTL_JITTER_SECONDS: ${CACHE_TTL_JITTER_SECONDS}
+      INSTANCE_ID: "tasks-1"
+      RABBIT_URL: ${RABBIT_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      redis-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  tasks-2:
+    build:
+      context: ..
+      dockerfile: services/tasks/Dockerfile
+    container_name: tasks-2
+    environment:
+      TASKS_PORT: "8082"
+      AUTH_GRPC_ADDR: ${AUTH_GRPC_ADDR}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_ADDRS: "redis-1:7001,redis-2:7002,redis-3:7003,redis-4:7004,redis-5:7005,redis-6:7006"
+      CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS}
+      CACHE_TTL_JITTER_SECONDS: ${CACHE_TTL_JITTER_SECONDS}
+      INSTANCE_ID: "tasks-2"
+      RABBIT_URL: ${RABBIT_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      redis-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  tasks-3:
+    build:
+      context: ..
+      dockerfile: services/tasks/Dockerfile
+    container_name: tasks-3
+    environment:
+      TASKS_PORT: "8082"
+      AUTH_GRPC_ADDR: ${AUTH_GRPC_ADDR}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_ADDRS: "redis-1:7001,redis-2:7002,redis-3:7003,redis-4:7004,redis-5:7005,redis-6:7006"
+      CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS}
+      CACHE_TTL_JITTER_SECONDS: ${CACHE_TTL_JITTER_SECONDS}
+      INSTANCE_ID: "tasks-3"
+      RABBIT_URL: ${RABBIT_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      redis-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ..
+      dockerfile: services/worker/Dockerfile
+    container_name: worker
+    environment:
+      RABBIT_URL: ${RABBIT_URL}
+      QUEUE_NAME: "task_events"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  graphql:
+    build:
+      context: ..
+      dockerfile: services/graphql/Dockerfile
+    container_name: graphql
+    environment:
+      GRAPHQL_PORT: ${GRAPHQL_PORT}
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "8090:8090"       
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # nginx-lb: HTTP балансировщик (порт 8080) — распределяет между репликами.
+  # nginx-tls: HTTPS терминатор (порт 8443) — проксирует на nginx-lb.
+  nginx-lb:
+    image: nginx:1.25-alpine
+    container_name: nginx_lb
+    volumes:
+      - ./lb/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - tasks-1
+      - tasks-2
+      - tasks-3
+    restart: unless-stopped
+
+  nginx-tls:
+    image: nginx:1.25-alpine
+    container_name: nginx_tls
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./tls/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./tls/cert.pem:/etc/nginx/tls/cert.pem:ro
+      - ./tls/key.pem:/etc/nginx/tls/key.pem:ro
+    depends_on:
+      - nginx-lb
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  rabbit_data:
+  redis1_data:
+  redis2_data:
+  redis3_data:
+  redis4_data:
+  redis5_data:
+  redis6_data:
