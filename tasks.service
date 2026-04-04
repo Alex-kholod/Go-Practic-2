@@ -1,0 +1,40 @@
+[Unit]
+Description=Tasks Service
+Documentation=https://github.com/Alex-kholod/Go-Practic-2
+After=network.target
+# Если на том же VPS есть PostgreSQL — ждём его.
+# Если БД внешняя — эту строку можно убрать.
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=tasksuser
+Group=tasksuser
+WorkingDirectory=/opt/tasks
+
+# Конфиг окружения отдельно от кода — не попадает в репозиторий.
+EnvironmentFile=/etc/tasks/tasks.env
+
+# Запускаем бинарник.
+ExecStart=/opt/tasks/tasks
+
+# Перезапуск при любом падении через 2 секунды.
+Restart=always
+RestartSec=2
+
+# ── Базовая защита ──────────────────────────────────────────────────────────
+# Запрещаем процессу повышать привилегии.
+NoNewPrivileges=true
+# Приватное /tmp — изолированная временная директория.
+PrivateTmp=true
+# Файловая система только для чтения, кроме явно разрешённых путей.
+ProtectSystem=strict
+# Разрешаем запись в /opt/tasks (логи, если нужны).
+ReadWritePaths=/opt/tasks
+
+# ── Лимиты ──────────────────────────────────────────────────────────────────
+# Максимум открытых файловых дескрипторов (важно для HTTP сервера).
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
